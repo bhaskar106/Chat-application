@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -73,60 +73,58 @@
 <script>
     console.log('hey its working')
     var socket = io('http://localhost:106')
-var messageContainer = document.getElementById('message-container')
-var messageForm = document.getElementById('send-container')
-var messageInput = document.getElementById('message-input')
+    var messageContainer = document.getElementById('message-container')
+    var messageForm = document.getElementById('send-container')
+    var messageInput = document.getElementById('message-input')
+    var name = prompt("Enter your name:")
+     if(name == null || name == "" ){
+        console.log('working6')
+        alert("Please enter a different user name");
+      }
+      else{
+        console.log('working7')
+        appendMessage('You joined');
+        socket.emit('new-user', name )
+      }
 
-var name = prompt("Enter your name:")
-if(name == null || name == "" ){
-  console.log('working6')
-  alert("Please enter a different user name");
-}
-else{
-  console.log('working7')
-  appendMessage('You joined');
-  socket.emit('new-user', name);
-  console.log(name)
-}
+      socket.on('username', name => {
+        console.log('working test')
+        appendMessage(`${name}`)
+      })
 
-socket.on('username', name => {
-  console.log('working test')
-  appendMessage(`${name}`) 
-})
+      socket.on('id', data => {
+        console.log('working test1')
+        appendMessage(`${data}`)
+      })
 
-socket.on('id', data => {
-  console.log('working test1')
-  appendMessage(`${data}`)
-})
+      socket.on('chat-message', data => {
+        console.log('working8')
+        appendMessage(`${data.name}: ${data.message}`)
+      })
 
-socket.on('chat-message', data => {
-  console.log('working8')
-  appendMessage(`${data.name}: ${data.message}`)
-})
+      socket.on('user-connected', name => {
+        console.log('working9')
+        appendMessage(`${name} connected`)
+      })
 
-socket.on('user-connected', name => {
-  console.log('working9')
-  appendMessage(`${name} connected`)
-})
+      socket.on('user-disconnected', name => {
+        console.log('working10')
+        appendMessage(`${name} disconnected`)
+      })
 
-socket.on('user-disconnected', name => {
-  console.log('working10')
-  appendMessage(`${name} disconnected`)
-})
+      messageForm.addEventListener('submit', e => {
+      e.preventDefault()
+      const message = messageInput.value
+      appendMessage(`You: ${message}`)
+      socket.emit('send-chat-message', message)
+      messageInput.value = ''
+      })
 
-messageForm.addEventListener('submit', e => {
-  e.preventDefault()
-  const message = messageInput.value
-  appendMessage(`You: ${message}`)
-  socket.emit('send-chat-message', message)
-  messageInput.value = ''
-})
-
-function appendMessage(message) {
-  const messageElement = document.createElement('div')
-  messageElement.innerText = message
-  messageContainer.append(messageElement)
-}
+      function appendMessage(message) {
+      const messageElement = document.createElement('div')
+      messageElement.innerText = message
+      messageContainer.append(messageElement)
+      }
 
 </script>
 
