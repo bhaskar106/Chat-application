@@ -64,13 +64,18 @@ io.sockets.on('connection', socket => {
 
   socket.on('username', Value => {
     console.log(Value);
-    if(Value == users.valueOf(socket.id))
+    console.log(users);
+    var V=Object.values(users);
+    var K=Object.keys(users);
+    console.log(V.indexOf(Value));
+    console.log(K);
+    console.log(K[V.indexOf(Value)]);
+    if(V.indexOf(Value) != -1)
     {   
      socket.on('send-chat-message', message => {
-      socket.to(users[socket.id]).emit('message',{ message:message, name: users[socket.id] });
+      socket.to(K[V.indexOf(Value)]).emit('message',{ message:message, name: users[socket.id] });
       });
      console.log('entered')
-     console.log(users[value])
      console.log('user came out')
     }
     else if(Value == 'All')
@@ -80,7 +85,7 @@ io.sockets.on('connection', socket => {
       socket.broadcast.emit('chat-message', { message:message, name: users[socket.id] });
       });
     }
-    else if(Value =! users.indexOf(`${Value}`))
+    else
     {
      socket.emit('Error',);
     }

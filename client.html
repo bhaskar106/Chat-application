@@ -184,8 +184,8 @@
     var namecontainer = document.getElementById('name-container')
     var chatMessage = document.getElementById('messages')
     var users=[];
-    //var x = document.getElementById("mySelect");
-   // var options = document.createElement("option");
+    var x = document.getElementById("mySelect");
+    var options = document.createElement("option");
     var name = prompt("Enter your name:")
     if(name == null || name == ""){
         console.log('empty name is working')
@@ -235,9 +235,10 @@
       socket.on('user-connected', name => {
         console.log('user connected from server')
         appendMessage(`${name} connected`)
-        //options.textContent = (`${name}`)
-       // options.value = (`${name}`)
-        //x.add(options, x[0])
+        var options = document.createElement("option");
+        options.textContent = (`${name}`)
+        options.value = (`${name}`)
+        x.add(options, x[x.length])
       })
 
       socket.on('user-disconnected', data => {
