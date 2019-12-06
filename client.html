@@ -165,7 +165,6 @@
         <div class="Middle" id="messages">
           <h2>Chat Messages</h2>
          <form id="send-container"> 
-          <!--<button type="button" onclick="myFunction()">update new users</button>-->
             <select id="mySelect" type="dropdown" name="clients">
               <option>All</option> 
             </select>
@@ -197,29 +196,11 @@
         console.log('Please connect to the server by giving the name')
         alert("Name should not be empty");
     }
-    //else if(name == x.options[n].value){
-      //console.log('Please connect to the server with the different name')
-      //alert("Please enter a different user name");
-    //}
     else{
-         /*for(i=1;i<x.length;i++)
-         {
-           console.log("for loop");
-           if(name == x.options[i].value)
-           {
-             var n=i
-             console.log(n);
-             console.log("if condition");
-           }
-         }*/
-
-
-
-        console.log('name is working')
-        appendMessage('You joined');
-        socket.emit('new-user' , name )
+       console.log('name is working')
+       appendMessage('You joined');
+       socket.emit('new-user' , name )
       
-
       socket.on('name', name => {
         console.log('name receive from server working')
         printMessage(`${name}`)
@@ -233,7 +214,7 @@
       socket.on('clients', client=> {
         console.log('client names')
         console.log(client.length)
-        for(i=0;i<client.length-1;i++)
+        for(i=0;i<client.length;i++)
         {
         printMessage(client[i])
         var options = document.createElement("option");
@@ -242,25 +223,7 @@
         x.add(options, x[x.length])
         }
       })
-
       
-      /*socket.on('message', data => {
-        console.log('message received from server to one')
-        printChat(`${data.name}: ${data.message}`)
-      })*/
-      
-      
-      socket.on('chat-message', data => {
-        console.log('message received from server to all')
-        printChat(`${data.name}: ${data.message}`)
-      })
-
-      socket.on('Error', data => {
-        console.log('Error')
-        printChat('Sorry! the data given is not found in the server,Please check the user')
-      })
-      
-
       socket.on('user-connected', name => {
         console.log('user connected from server')
         appendMessage(`${name} connected`)
@@ -269,82 +232,41 @@
         options.value = (`${name}`)
         x.add(options, x[x.length])
       })
+   
+      socket.on('chat-message', data => {
+        console.log("entered")
+        console.log('message received from server to all')
+        printChat(`${data.name}: ${data.message}`)
+        alert(`${data.name}:${data.message}`)
+        console.log("came out")
+      })
+
+      socket.on('Userdisconnect',message => {
+        console.log("User disconnected beacause of same name")
+        alert("Name already exist , please connect to the server again by entering different user name");
+      })
 
       socket.on('user-disconnected', data => {
         console.log('user disconnected from the server')
         appendMessage(`${data} disconnected`)
-        for (i=0;i<x.length;i++) {
-          if (x.options[i].value === `${data}`){
-              x.remove(i);}
+        for (i=x.length-1;i>=0;i--) {
+          console.log("for loop")
+         if (x.options[i].value == data){
+          console.log("if condition")
+          x.remove(i);}
         }
       })
-
-
-
-      //just for checking
-     socket.on('I',a => {
-      console.log(a)
-      appendMessage(`${a}`)
-     })
- 
-     socket.on('S',b => {
-      console.log(b)
-      appendMessage(`${b}`)
-     })
-
-     socket.on('Obj',c => {
-      console.log(c)
-      appendMessage(JSON.stringify(c))
-     })
-
-     socket.on('ObjA',d => {
-      console.log(d)
-      appendMessage(JSON.stringify(d))
-     })
- 
-     socket.on('ObjsA',e => {
-      console.log(e)
-      appendMessage(JSON.stringify(e))
-     })
-
-     socket.on('IA',f =>{
-      console.log(f)
-      appendMessage(JSON.stringify(f))
-     })
- 
-     socket.on('SA',g => {
-      console.log(g)
-      appendMessage(JSON.stringify(g))
-     })
-
-     socket.on('OIA',h => {
-      console.log(h)
-      appendMessage(JSON.stringify(h))
-     })
-
-     socket.on('OOSIA',i => {
-      console.log(i)
-      appendMessage(JSON.stringify(i))
-     })
-
-     socket.on('AA',j => {
-      console.log(j)
-      appendMessage(JSON.stringify(j))
-     })
-
-
 
       messageForm.addEventListener('submit', e => {
       e.preventDefault()
       const message = messageInput.value
       const Select = mySelect.value
       printChat(`To: ${Select} message: ${message}`)
-      socket.emit('username', Select)
-      socket.emit('send-chat-message', message )
+      socket.emit('username', { Select:Select , message:message })
       messageInput.value = ''
       //mySelect.value = 'All'
       })
-   
+      
       function appendMessage(message) {
       const messageElement = document.createElement('div')
       messageElement.innerText = message

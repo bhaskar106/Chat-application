@@ -13,90 +13,71 @@ http.listen(106, () =>{
 })
 
 var users = [];
-var a=1;
-var b="string";
-var c={a:1};
-var d=[{a:"b"},{c:"d"}];
-var e=[{a:1},{b:"string"},{c:[1,2]},{d:{a:"b"}}];
-var f=[1,2,3,4];
-var g=["hi","how","are","you",{t:'t'}];
-var h=[{a:1},{b:2},{c:3}];
-var i=[{a:1},{b:"string"},{c:{a:1}}];
-var j=[[1,2,3,4],["hi","how","are","you"]];
-
-
 
 io.sockets.on('connection', socket => {
   console.log('connected');
-  socket.on('new-user', name => {
-    console.log('new user');
-      users[socket.id] = name;
+
+
+   socket.on('new-user', name => {
+      console.log('new user');
       io.sockets.emit('name',name);
+      users[socket.id] = name;
       socket.emit('id',socket.id);
       socket.emit('Allusers',users);
       console.log(Object.keys(users));
       console.log(Object.values(users));
       console.log(users);
       clients=Object(users);
-      console.log(Object(clients));
       socket.emit('clients', Object.values(users));
       socket.broadcast.emit('user-connected', name);
+      var U=(Object.values(users))
+      var u=(Object.keys(users))
+      console.log(U.length)
+      for(i=0;i<U.length-1;i++)
+      {
+      console.log("for loop");
+      console.log(U.length)
+      if(U[U.length-1] == U[i])
+      {
+        io.to(socket.id).emit('Userdisconnect',{name:`${name}`});
+        //socket.disconnect(u[Object.values(users).length]);
+        console.log("if condition");
+        console.log(u[U.length-1]);
+        break;
+      }
+      }
+      
+   })
 
-
-
-     //just for checking
-     socket.emit('I',a);
-     socket.emit('S',b);
-     socket.emit('Obj',c);
-     socket.emit('ObjA',d);
-     socket.emit('ObjsA',e);
-     socket.emit('IA',f);
-     socket.emit('SA',g);
-     socket.emit('OIA',h); 
-     socket.emit('OOSIA',i);
-     socket.emit('AA',j);
-
-
-
-
-  })
    
 
+
   socket.on('username', Value => {
-    console.log(Value);
-    console.log(users);
     var V=Object.values(users);
     var K=Object.keys(users);
-    console.log(V.indexOf(Value));
-    console.log(K);
-    console.log(K[V.indexOf(Value)]);
-    if(V.indexOf(Value) != -1)
-    {  
-     console.log('entered') 
-     socket.on('send-chat-message', message => {
-      socket.to(K[V.indexOf(Value)]).emit('chat-message',{ message:message, name: users[socket.id] });
-     });
-     console.log('user came out')
-    }
-    else if(Value == 'All')
-    {
-     socket.on('send-chat-message', message => {
-      console.log('sending message');
-      socket.broadcast.emit('chat-message', { message:message, name: users[socket.id] });
-     });
-    }
-    else
-    {
-     socket.emit('Error',);
-    }
+    var N=`${Value.Select}` 
+    console.log(N);
+    console.log(V.indexOf(N));
+    console.log(K[V.indexOf(N)]);
+    console.log('entered option value') 
+     if(V.indexOf(N) != -1)
+     {
+      console.log("entered if condition")
+      socket.to(K[V.indexOf(N)]).emit('chat-message',{ message:`${Value.message}`, name: users[socket.id] });
+      console.log("closing if")
+     }
+     else
+     {
+      console.log("enter else")
+      socket.broadcast.emit('chat-message', { message:`${Value.message}`, name: users[socket.id] });
+      console.log("close else")
+     }
   });
-
 
   socket.on('disconnect', () => {
     console.log('disconnected');
     socket.broadcast.emit('user-disconnected', users[socket.id]);
     delete users[socket.id];
   });
-
 
 });
