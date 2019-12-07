@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat App</title>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+            input[type=text] {
+            border: 3px solid rgb(185, 185, 185);
+            font-size : 16px;
+            border-radius: 7px;
+            }
+            button[type=submit]{
+            cursor: pointer;
+            border: 2px solid rgb(185, 185, 185);
+            border-radius: 10px;
+            background-color: #90EE90;
+            position: center;
+            bottom: 0;
+            }
+            select[type=dropdown]{
+            border-radius: 8px;
+            }
+            input[type=submit]{
+            cursor: pointer;
+            border: 2px solid rgb(185, 185, 185);
+            border-radius: 10px;
+            }
+            #send-container {
+            position: fixed;
+            overflow: auto;
+            bottom: 0;
+            background-color: white;
+            display: flex;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+            } 
+
+            #myHeader {
+            color: black;
+            text-align: center;
+            }
+            
+            header {
+            /*background-color:aqua;*/
+            background-image: linear-gradient(cyan,white);
+            padding: 30px;
+            top:0;
+            text-align: center;
+            text-emphasis-color: black;
+            font-size : 30px;
+            color: white;
+            }
+
+
+            .rightside {
+            height: 97%;
+            width: 300px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            /*background-color: #ffffff;*/
+            background-image: linear-gradient(#ffc4c4,yellow,cyan);
+            display: table-row;
+            border: 2px solid rgb(134, 134, 134);
+            border-radius: 10px;
+            overflow-x: hidden;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            resize: both;
+            }
+
+            .rightside a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #ffffff;
+            display: block;
+            }
+
+            .rightside a:hover {
+            background-color: hsl(180, 100%, 80%);
+            }
+
+            .leftside {
+            height: 97%;
+            width: 300px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            /*background-color: #ffffff;*/
+            background-image: linear-gradient(#ffc4c4,yellow,cyan);
+            display: table-row-group;
+            border: 2px solid rgb(134, 134, 134);
+            border-radius: 10px;
+            overflow-x: hidden;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            resize: both;
+            }
+
+            .leftside a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #ffffff;
+            display: block;
+            }
+
+            .leftside a:hover {
+            background-color: hsl(180, 100%, 80%);
+            }
+
+
+            .Middle {
+            height: 70%;
+            width: 500px;
+            position: fixed;
+            background-color: #ffffff;
+            border: 2px solid rgb(134, 134, 134);
+            border-radius: 10px;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            resize: both;
+            left: 50%;
+            bottom: 0;
+            -ms-transform: translate(0%,0%);
+                transform: translate(-50%, 0%);
+            }
+
+            .Middle a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #ffffff;
+            display: block;
+            }
+
+            .Middle a:hover {
+            background-color: hsl(180, 100%, 80%);
+            }
+            
+            
+    </style>
+</head>
+
+<body>
+        <header>
+          <h3 id="myHeader">Chat Application</h3>
+        </header>
+
+
+        <div class="rightside" id="message-container">
+          <h2>Connections</h2>
+        </div> 
+
+
+        <div class="Middle" id="messages">
+          <h2>Chat Messages</h2>
+         <form id="send-container"> 
+            <select id="mySelect" type="dropdown" name="clients">
+              <option>All</option> 
+            </select>
+
+          <input type="text" id="message-input">
+          <button type="submit" id="send-button">Send</button>
+         </form>
+        </div>
+        
+
+        <div class="leftside" id="name-container" >
+          <h2>User names</h2>
+        </div>
+</body>
+
+<script>
+    console.log('hey its working')
+    var socket = io('http://localhost:106')
+    var messageContainer = document.getElementById('message-container')
+    var messageForm = document.getElementById('send-container')
+    var nameInput = document.getElementById('name-input')
+    var messageInput = document.getElementById('message-input')
+    var namecontainer = document.getElementById('name-container')
+    var chatMessage = document.getElementById('messages')
+    var x = document.getElementById("mySelect");
+    //var options = document.createElement("option");
+    var name = prompt("Enter your name:")
+    if(name == null || name == ""){
+        console.log('Please connect to the server by giving the name')
+        alert("Name should not be empty");
+    }
+    else{
+       console.log('name is working')
+       appendMessage('You joined');
+       socket.emit('new-user' , name )
+      
+      socket.on('name', name => {
+        console.log('name receive from server working')
+        printMessage(`${name}`)
+      })
+
+      socket.on('id', data => {
+        console.log('id receive from server working')
+        appendMessage(`Your Id :${data}`)
+      })
+
+      socket.on('clients', client=> {
+        console.log('client names')
+        console.log(client.length)
+        for(i=0;i<client.length-1;i++)
+        {
+        printMessage(client[i])
+        var options = document.createElement("option");
+        options.textContent = (client[i])
+        options.value = (client[i])
+        x.add(options, x[x.length])
+        }
+      })
+      
+      socket.on('user-connected', name => {
+        console.log('user connected from server')
+        appendMessage(`${name} connected`)
+        var options = document.createElement("option");
+        options.textContent = (`${name}`)
+        options.value = (`${name}`)
+        x.add(options, x[x.length])
+      })
+   
+      socket.on('chat-message', data => {
+        console.log("entered")
+        console.log('message received from server to all')
+        printChat(`${data.name}: ${data.message}`)
+        alert(`${data.name}:${data.message}`)
+        console.log("came out")
+      })
+
+      socket.on('Userdisconnect',message => {
+        console.log("User disconnected beacause of same name")
+        alert("Name already exist , please connect to the server again by entering different user name");
+        window.location.reload();
+      })
+
+      socket.on('user-disconnected', data => {
+        console.log('user disconnected from the server')
+        appendMessage(`${data} disconnected`)
+        for (i=x.length-1;i>=0;i--) {
+          console.log("for loop")
+         if (x.options[i].value == data){
+          console.log("if condition")
+          x.remove(i);
+          break;}
+        }
+      })
+
+      messageForm.addEventListener('submit', e => {
+      e.preventDefault()
+      const message = messageInput.value
+      const Select = mySelect.value
+      printChat(`To: ${Select} message: ${message}`)
+      socket.emit('username', { Select:Select , message:message })
+      messageInput.value = ''
+      //mySelect.value = 'All'
+      })
+      
+      function appendMessage(message) {
+      const messageElement = document.createElement('div')
+      messageElement.innerText = message
+      messageContainer.append(messageElement)
+      }
+
+      function printMessage(content){
+      const messagecontent = document.createElement('div')
+      messagecontent.innerText = content
+      namecontainer.append(messagecontent)
+      }
+
+      function printChat(content){
+      const chatmessage = document.createElement('div')
+      chatmessage.innerText = content
+      chatMessage.append(chatmessage)
+      }
+    }
+
+</script>
+
+</html>
+
+
