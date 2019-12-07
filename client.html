@@ -214,7 +214,7 @@
       socket.on('clients', client=> {
         console.log('client names')
         console.log(client.length)
-        for(i=0;i<client.length;i++)
+        for(i=0;i<client.length-1;i++)
         {
         printMessage(client[i])
         var options = document.createElement("option");

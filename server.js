@@ -33,6 +33,8 @@ io.sockets.on('connection', socket => {
       var U=(Object.values(users))
       var u=(Object.keys(users))
       console.log(U.length)
+      console.log(u.length-1)
+      console.log(socket.id)
       for(i=0;i<U.length-1;i++)
       {
       console.log("for loop");
