@@ -176,7 +176,7 @@
         
 
         <div class="leftside" id="name-container" >
-          <h2>List of users</h2>
+          <h2>User names</h2>
         </div>
 </body>
 
@@ -244,6 +244,7 @@
       socket.on('Userdisconnect',message => {
         console.log("User disconnected beacause of same name")
         alert("Name already exist , please connect to the server again by entering different user name");
+        window.location.reload();
       })
 
       socket.on('user-disconnected', data => {
@@ -253,7 +254,8 @@
           console.log("for loop")
          if (x.options[i].value == data){
           console.log("if condition")
-          x.remove(i);}
+          x.remove(i);
+          break;}
         }
       })
 
