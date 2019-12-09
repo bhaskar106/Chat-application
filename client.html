@@ -189,8 +189,7 @@
     var messageInput = document.getElementById('message-input')
     var namecontainer = document.getElementById('name-container')
     var chatMessage = document.getElementById('messages')
-    var x = document.getElementById("mySelect");
-    //var options = document.createElement("option");
+    var x = document.getElementById("mySelect")
     var name = prompt("Enter your name:")
     if(name == null || name == ""){
         console.log('Please connect to the server by giving the name')
@@ -217,7 +216,7 @@
         for(i=0;i<client.length-1;i++)
         {
         printMessage(client[i])
-        var options = document.createElement("option");
+        var options = document.createElement("option")
         options.textContent = (client[i])
         options.value = (client[i])
         x.add(options, x[x.length])
@@ -227,7 +226,7 @@
       socket.on('user-connected', name => {
         console.log('user connected from server')
         appendMessage(`${name} connected`)
-        var options = document.createElement("option");
+        var options = document.createElement("option")
         options.textContent = (`${name}`)
         options.value = (`${name}`)
         x.add(options, x[x.length])
@@ -243,7 +242,7 @@
 
       socket.on('Userdisconnect',message => {
         console.log("User disconnected beacause of same name")
-        alert("Name already exist , please connect to the server again by entering different user name");
+        alert("Name already exist , please connect to the server again by entering different user name")
         window.location.reload();
       })
 
