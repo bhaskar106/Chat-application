@@ -42,7 +42,6 @@ io.sockets.on('connection', socket => {
       if(U[U.length-1] == U[i])
       {
         io.to(socket.id).emit('Userdisconnect',{name:`${name}`});
-        //socket.disconnect(u[Object.values(users).length]);
         console.log("if condition");
         console.log(u[U.length-1]);
         break;
